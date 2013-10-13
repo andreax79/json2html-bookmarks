@@ -1,4 +1,4 @@
-#!/usr/bin/python -
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # Convert Firefox bookmarks from JSON to HTML format
@@ -27,9 +27,19 @@
 #
 
 import sys
-import json
 import math
 import codecs
+
+try:
+    import json
+except:
+    # Python < 2.6
+    try:
+        import simplejson as json
+    except:
+        sys.stderr.write("%s: Please install the required module 'simplejson'.\n" % sys.argv[0])
+        sys.exit(1)
+
 if sys.version > '3':
     long = int
 

@@ -32,21 +32,23 @@ import codecs
 
 try:
     import json
-except:
+except ImportError:
     # Python < 2.6
     try:
         import simplejson as json
-    except:
+    except ImportError:
         sys.stderr.write("%s: Please install the required module 'simplejson'.\n" % sys.argv[0])
         sys.exit(1)
 
 if sys.version > '3':
     long = int
 
+
 def err():
     e = sys.exc_info()[1]
     sys.stderr.write(u"%s: %s\n" % (sys.argv[0], str(e)))
     sys.exit(1)
+
 
 def printi(output, indent, string):
     if sys.version > '3':
@@ -54,11 +56,13 @@ def printi(output, indent, string):
     else:
         output.write((" " * 4 * indent) + string.encode('utf-8') + "\n")
 
+
 def convert_time(time):
     try:
         return long(math.floor(long(time) / 1000000))
-    except:
+    except Exception:
         return ""
+
 
 def p(output, data, indent=0):
     children = data.get('children', None)
@@ -84,7 +88,7 @@ def p(output, data, indent=0):
         # Output the children of a folder/main
         for child in children:
             p(output, child, indent+1)
-        printi(output, indent,'</DL><p>')
+        printi(output, indent, '</DL><p>')
     if uri is not None:
         # Output a bookmark
         date_added = 'dateAdded' in data and ' ADD_DATE="%s"' % convert_time(data.get('dateAdded')) or ''
@@ -96,6 +100,7 @@ def p(output, data, indent=0):
             for anno in annos:
                 if isinstance(anno, dict) and anno.get('name') == 'bookmarkProperties/description':
                     printi(output, indent, '<DD>%s' % anno.get('value'))
+
 
 def main():
     if len(sys.argv) < 2 or len(sys.argv) > 3:
@@ -119,6 +124,6 @@ def main():
         err()
     sys.exit(0)
 
+
 if __name__ == '__main__':
     main()
-
